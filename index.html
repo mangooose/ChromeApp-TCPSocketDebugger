@@ -1,0 +1,20 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>TCP Socket teser and debugger</title>
+</head>
+<body>
+    <label for="hostInput">Host and port for connect:</label>
+    <input type="text" id="hostInput" placeholder="127.0.0.1:22000">
+    <input type="button" value="Connect" id="connectionButton">
+    <br/><br/>
+    <textarea id="data" style="width: 80%"></textarea><br/>
+    <label for="sendInput">Send text (support esc as \n, \r, etc):</label>
+    <input type="text" id="sendInput" placeholder="My message">
+    <input type="button" value="Send" id="sendButton" disabled>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
