@@ -1,7 +1,7 @@
 {
-  "name": "TCP Socket Tester",
-  "short_name": "Socket Tester",
-  "description": "TCP Socket test and debug",
+  "name": "TCP Socket debugger",
+  "short_name": "TCP Socket debuggerr",
+  "description": "TCP Socket tester and debuger",
   "version": "0.0.1",
   "app": {
     "background": {
