@@ -1,0 +1,21 @@
+html, body {
+    margin: 0px;
+    padding: 0px;
+}
+div {
+    width: auto;
+    margin: 10px;
+    display:table;
+}
+.ready {
+    color: green;
+}
+.error {
+    color: red;
+}
+.incoming {
+    color: black;
+}
+.outcoming {
+    color: dimgray;
+}

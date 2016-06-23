@@ -14,7 +14,7 @@
     "512": "img/icon_512.png"
   },
   "permissions" : [
-    
+    "storage"
   ],
   "sockets": { "tcp" : { "connect": "*" } },
   "manifest_version": 2
