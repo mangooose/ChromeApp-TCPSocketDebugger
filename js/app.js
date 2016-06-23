@@ -6,6 +6,7 @@ var dataAdd = function(data, type) {
         p.classList.add(type);
     }
     dataDiv.appendChild(p);
+    dataDiv.scrollTop = dataDiv.scrollHeight;
 };
 
 var init = function() {
@@ -112,6 +113,9 @@ var init = function() {
         }
         if(info.resultCode === -100) {
             dataAdd('Server reset connection', 'error');
+            hostSubmit.value = 'Connect';
+            socketId = undefined;
+            dataAdd('Socket close', 'ready');
         } else {
             dataAdd('Error: ' + nfo.resultCode);
         }
