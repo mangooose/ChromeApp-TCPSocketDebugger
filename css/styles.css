@@ -27,7 +27,7 @@ html, body {
     width: 45vw;
     margin-right: 3vw;
 }
-input {
+input, select {
     border: 0px none;
     height: 2vh;
     margin: 0px;
@@ -35,15 +35,19 @@ input {
     font-size: 1.5vh;
     width: 20vw;
 }
-input[type=submit] {
+input[type=submit], select {
     width: 10vw;
     height: 4vh;
+}
+input[type=checkbox] {
+    width: auto;
 }
 #hostForm {
     margin: 0px;
     padding: 0px;
     text-align: right;
 }
+
 #data {
     height: 80vh;
     background-color: lightgrey;
@@ -63,7 +67,7 @@ input[type=submit] {
     float: right;
 }
 #sendInput {
-    width: 50vw;
+    width: 40vw;
 }
 .ready {
     color: green;

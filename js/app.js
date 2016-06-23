@@ -17,12 +17,24 @@ var init = function() {
     var sendForm = document.getElementById('sendForm');
     var sendInput = document.getElementById('sendInput');
 
+    var eolSelect = document.getElementById('eolSelect');
+
     var socketId;
+
+    eolSelect.onchange = function() {
+        chrome.storage.local.set({eol: eolSelect.value});
+    }
 
     // Get last host from local storage
     chrome.storage.local.get('host', function(res){
         if(res.host) {
             hostInput.value = res.host;
+        }
+    });
+
+    chrome.storage.local.get('eol', function(res){
+        if(res.eol) {
+            eolSelect.value = res.eol;
         }
     });
 
@@ -73,7 +85,18 @@ var init = function() {
                 dataAdd('Socket closed by server', 'error');
                 return;
             }
-            var data = sendInput.value + '\r\n';
+            var data = sendInput.value;
+            switch (eolSelect.value) {
+                case 'LF':
+                    data += '\n';
+                    break;
+                case 'CR+LF':
+                    data += '\r\n';
+                    break;
+                case 'CR':
+                    data += '\r';
+                    break;
+            }
             var buffer = new ArrayBuffer(data.length);
             var view = new Uint8Array(buffer);
             for (var c = 0; c < data.length; c++) {
