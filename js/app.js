@@ -18,7 +18,8 @@ var init = function() {
     var sendInput = document.getElementById('sendInput');
 
     var eolSelect = document.getElementById('eolSelect');
-
+    var charsetSelect = document.getElementById('charsetSelect');
+    var escCheckbox = document.getElementById('escCheckbox');
     var socketId;
 
     
@@ -40,6 +41,29 @@ var init = function() {
     eolSelect.onchange = function() {
         chrome.storage.local.set({eol: eolSelect.value});
     }
+
+    // Restore and save Charset select
+    chrome.storage.local.get('charset', function(res){
+        if(res.charset) {
+            charsetSelect.value = res.charset;
+        }
+    });
+
+    charsetSelect.onchange = function() {
+        chrome.storage.local.set({charset: charsetSelect.value});
+    }
+
+    // Restore and save ESC
+    chrome.storage.local.get('esc', function(res){
+        if(res.esc !== undefined) {
+            escCheckbox.checked = res.esc;
+        }
+    });
+
+    escCheckbox.onchange = function() {
+        chrome.storage.local.set({esc: escCheckbox.checked});
+    }
+
 
     // On connect to host submit
     hostForm.onsubmit = function(){
