@@ -21,70 +21,77 @@ var init = function() {
 
     var socketId;
 
-    eolSelect.onchange = function() {
-        chrome.storage.local.set({eol: eolSelect.value});
-    }
+    
 
-    // Get last host from local storage
+    // Restore host
     chrome.storage.local.get('host', function(res){
         if(res.host) {
             hostInput.value = res.host;
         }
     });
 
+    // Restore and save End of Line
     chrome.storage.local.get('eol', function(res){
         if(res.eol) {
             eolSelect.value = res.eol;
         }
     });
 
+    eolSelect.onchange = function() {
+        chrome.storage.local.set({eol: eolSelect.value});
+    }
+
     // On connect to host submit
     hostForm.onsubmit = function(){
-        // If socket connected - disconnect
-        if (socketId) {
+        // Check socket
+        if(socketId !== undefined) {
             chrome.sockets.tcp.close(socketId, function() {
+                dataAdd('Socket closed', 'ready');
                 hostSubmit.value = 'Connect';
-                socketId = undefined;
-                dataAdd('Socket close', 'ready');
             });
             return false;
         }
 
-        chrome.sockets.tcp.create( {}, function(socketInfo){
+        // Create socket
+        chrome.sockets.tcp.create({}, function(socketInfo){
             socketId = socketInfo.socketId;
-            dataAdd('Socket created' ,'ready');
+            dataAdd('Socket ' + socketId + ' is created and ready for connection', 'ready');
+            // Set connection
             chrome.sockets.tcp.connect(socketId, hostInput.value.split(':')[0], parseInt(hostInput.value.split(':')[1]) || 80, function(res) {
                 if (chrome.runtime.lastError) {
-                    chrome.sockets.tcp.close(socketId, function() {
-                        socketId = undefined;
-                        hostButton.value = 'Connect';
-                        dataAdd('Socket closed by error: '+ chrome.runtime.lastError.message, 'error');
-                    });
+                    dataAdd('Socket error: '+ chrome.runtime.lastError.message, 'error');
                     return;
                 }
                 chrome.storage.local.set({host: hostInput.value});
                 hostSubmit.value = 'Disconnect';
-                dataAdd('Socket connected', 'ready');
-
+                dataAdd('Connected to ' + hostInput.value, 'ready');
             });
         });
+
         return false;
     };
 
     // On message submit
     sendForm.onsubmit = function() {
-        if(!socketId) {
-            dataAdd('Socket is disconnected', 'error');
+        if (socketId === undefined) {
+            hostSubmit.value = 'Connect';
+            dataAdd('Socket is closed', 'error');
             return false;
         }
-        // Check connection
-        chrome.sockets.tcp.getInfo(socketId, function(info){
-            if (!info.connected) {
+        chrome.sockets.tcp.getInfo(socketId, function(socketInfo){
+            
+            // Check connection
+            if (!socketInfo.connected) {
                 hostSubmit.value = 'Connect';
-                socketId = undefined;
-                dataAdd('Socket closed by server', 'error');
+                dataAdd('Connection is closed', 'error');
+                chrome.sockets.tcp.close(socketId, function() {
+                    dataAdd('Socket ' + socketInfo.socketId + ' closed as disconnected', 'error');
+                    hostSubmit.value = 'Connect';
+                    socketId = undefined;
+                });
                 return;
             }
+
             var data = sendInput.value;
             switch (eolSelect.value) {
                 case 'LF':
@@ -104,13 +111,6 @@ var init = function() {
             }
 
             chrome.sockets.tcp.send(socketId, buffer, function(res){
-                chrome.sockets.tcp.getInfo(socketId, function(info){
-                    if (!info.connected) {
-                        hostSubmit.value = 'Connect';
-                        socketId = undefined;
-                        dataAdd('Socket closed by server', 'error');
-                    }
-                });
                 dataAdd(data, 'outcoming');
             });
         });
@@ -118,30 +118,26 @@ var init = function() {
         return false;
     }
 
-    chrome.sockets.tcp.onReceive.addListener(function(info){
-        if(info.socketId !== socketId) {
+    // On incoming message
+    chrome.sockets.tcp.onReceive.addListener(function(socketInfo){
+        if(socketInfo.socketId !== socketId) {
             return;
         }
-        var view = new Uint8Array(info.data);
+        var view = new Uint8Array(socketInfo.data);
         var text = '';
         view.forEach(function(ch){
             text += String.fromCharCode(ch);
         });
         dataAdd(text, 'incoming');
     });
-    
-    chrome.sockets.tcp.onReceiveError.addListener(function(info){
-        if(info.socketId !== socketId) {
-            return;
-        }
-        if(info.resultCode === -100) {
-            dataAdd('Server reset connection', 'error');
+
+    // On error    
+    chrome.sockets.tcp.onReceiveError.addListener(function(socketInfo){
+        chrome.sockets.tcp.close(socketId, function() {
+            dataAdd('Socket ' + socketInfo.socketId + ' closed: ' + socketInfo.resultCode, 'ready');
             hostSubmit.value = 'Connect';
             socketId = undefined;
-            dataAdd('Socket close', 'ready');
-        } else {
-            dataAdd('Error: ' + nfo.resultCode);
-        }
+        });
     });
 };
 document.addEventListener("DOMContentLoaded", init);
