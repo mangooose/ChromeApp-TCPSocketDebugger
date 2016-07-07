@@ -25,10 +25,19 @@ var init = function() {
     var converter = new TextConverter('utf-8');
     var history = [];
     var historyPosition = 0;
-    /*
+    
     sendInput.onkeydown = function(event) {
-        (event.keyCode);
-    };*/
+        if(event.keyCode === 38 && historyPosition > 0) {
+            historyPosition--;
+            sendInput.value = history[historyPosition];
+        }
+        
+        if(event.keyCode === 40 && historyPosition < history.length) {
+            historyPosition++;
+            sendInput.value = history[historyPosition] || '';
+        }
+        
+    };
 
     // Restore host
     chrome.storage.local.get('host', function(res){
@@ -142,8 +151,11 @@ var init = function() {
 
             chrome.sockets.tcp.send(socketId, buffer, function(res){
                 dataAdd(data, 'outcoming');
-                history.push(eolSelect.value);
-                sendInput.value = '';
+                if (sendInput.value !== '') {
+                    history.push(sendInput.value);
+                    historyPosition = history.length;
+                    sendInput.value = '';
+                }
             });
         });
         
