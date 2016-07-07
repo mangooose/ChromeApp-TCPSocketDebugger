@@ -2,7 +2,7 @@
   "name": "TCP Socket debugger",
   "short_name": "TCP Socket debuggerr",
   "description": "TCP Socket tester and debuger",
-  "version": "0.0.1",
+  "version": "0.0.8",
   "app": {
     "background": {
       "scripts": ["js/background.js"]
