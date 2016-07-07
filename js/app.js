@@ -20,8 +20,9 @@ var init = function() {
     var eolSelect = document.getElementById('eolSelect');
     var charsetSelect = document.getElementById('charsetSelect');
     var escCheckbox = document.getElementById('escCheckbox');
-    var socketId;
 
+    var socketId;
+    var converter = new TextConverter('utf-8');
     
 
     // Restore host
@@ -46,11 +47,13 @@ var init = function() {
     chrome.storage.local.get('charset', function(res){
         if(res.charset) {
             charsetSelect.value = res.charset;
+            converter = new TextConverter(res.charset);
         }
     });
 
     charsetSelect.onchange = function() {
         chrome.storage.local.set({charset: charsetSelect.value});
+        converter = new TextConverter(charsetSelect.value);
     }
 
     // Restore and save ESC
@@ -129,11 +132,7 @@ var init = function() {
                     data += '\r';
                     break;
             }
-            var buffer = new ArrayBuffer(data.length);
-            var view = new Uint8Array(buffer);
-            for (var c = 0; c < data.length; c++) {
-                view[c] = data.charCodeAt(c) % 256;
-            }
+            var buffer = converter.encode(data);
 
             chrome.sockets.tcp.send(socketId, buffer, function(res){
                 dataAdd(data, 'outcoming');
@@ -148,11 +147,7 @@ var init = function() {
         if(socketInfo.socketId !== socketId) {
             return;
         }
-        var view = new Uint8Array(socketInfo.data);
-        var text = '';
-        view.forEach(function(ch){
-            text += String.fromCharCode(ch);
-        });
+        var text = converter.decode(socketInfo.data);
         dataAdd(text, 'incoming');
     });
 
