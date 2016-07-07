@@ -22,24 +22,22 @@
     <div class="sendDiv">
         <form id="sendForm">
             <input type="text" id="sendInput" placeholder="My message"><input type="submit" value="Send">
-            
-            EOL:
             <select title="Pad the message with End Of Line characters" id="eolSelect">
-                <option>NONE</option>
+                <option>NONE EOL</option>
                 <option>LF</option>
                 <option>CR+LF</option>
                 <option>CR</option>
             </select>
-            
-            CHARSET:
             <select title="Host charset" id="charsetSelect">
                 <option>UTF-8</option>
                 <option>ASCII</option>
                 <!--<option>KOI8-R</option>
                 <option>CP-1251</option>-->
             </select>
-            ESC:
-            <input type="checkbox" title="Parse escape sequence in message" id="escCheckbox">
+            
+            <input type="checkbox" title="Parse escape sequence in message" id="escCheckbox" class="checkbox">
+            <label for="escCheckbox">Use escape sequence</label>
+            
             <span>&copy; Roman Sorokin, 2016</span>
         </form>
     </div>

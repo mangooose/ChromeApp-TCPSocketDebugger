@@ -72,6 +72,7 @@ var init = function() {
             chrome.sockets.tcp.close(socketId, function() {
                 dataAdd('Socket closed', 'ready');
                 hostSubmit.value = 'Connect';
+                socketId = undefined;
             });
             return false;
         }
