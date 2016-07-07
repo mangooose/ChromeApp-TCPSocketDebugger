@@ -19,11 +19,16 @@ var init = function() {
 
     var eolSelect = document.getElementById('eolSelect');
     var charsetSelect = document.getElementById('charsetSelect');
-    var escCheckbox = document.getElementById('escCheckbox');
+    //var escCheckbox = document.getElementById('escCheckbox');
 
     var socketId;
     var converter = new TextConverter('utf-8');
     var history = [];
+    var historyPosition = 0;
+    /*
+    sendInput.onkeydown = function(event) {
+        (event.keyCode);
+    };*/
 
     // Restore host
     chrome.storage.local.get('host', function(res){
@@ -57,6 +62,7 @@ var init = function() {
     }
 
     // Restore and save ESC
+    /*
     chrome.storage.local.get('esc', function(res){
         if(res.esc !== undefined) {
             escCheckbox.checked = res.esc;
@@ -66,7 +72,7 @@ var init = function() {
     escCheckbox.onchange = function() {
         chrome.storage.local.set({esc: escCheckbox.checked});
     }
-
+    */
 
     // On connect to host submit
     hostForm.onsubmit = function(){
@@ -137,7 +143,7 @@ var init = function() {
             chrome.sockets.tcp.send(socketId, buffer, function(res){
                 dataAdd(data, 'outcoming');
                 history.push(eolSelect.value);
-                eolSelect.value = '';
+                sendInput.value = '';
             });
         });
         
