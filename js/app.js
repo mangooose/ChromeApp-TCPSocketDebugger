@@ -23,7 +23,7 @@ var init = function() {
 
     var socketId;
     var converter = new TextConverter('utf-8');
-    
+    var history = [];
 
     // Restore host
     chrome.storage.local.get('host', function(res){
@@ -136,6 +136,8 @@ var init = function() {
 
             chrome.sockets.tcp.send(socketId, buffer, function(res){
                 dataAdd(data, 'outcoming');
+                history.push(eolSelect.value);
+                eolSelect.value = '';
             });
         });
         
