@@ -67,11 +67,12 @@ Encoder.prototype.encode = function(text) {
     
     var buffer = new ArrayBuffer(text.length);
     var view = new Uint8Array(buffer);
+    var self = this;
     view.forEach(function(val, pos){
         var code = text.charCodeAt(pos);
         if (code < 128) {
             view[pos] = code;
-        } else if(recode = this._map.indexOf(code) !== -1) {
+        } else if(recode = self._map.indexOf(code) !== -1) {
             view[pos] = 128 + recode;
         } else {
             throw new Error('Charaster not found in charset');
