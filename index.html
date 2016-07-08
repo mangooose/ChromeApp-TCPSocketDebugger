@@ -22,7 +22,7 @@
     <div class="sendDiv">
         <form id="sendForm">
             <input type="text" id="sendInput" placeholder="My message"><input type="submit" value="Send">
-            <div class="tooltip" data-tooltip="You can select, what a chars will be padded to end of messege string">
+            <div class="tooltip" data-tooltip="You can choose, which charasters will be added to end of message when you send it">
                 <select id="eolSelect">
                     <option>NONE EOL</option>
                     <option>LF</option>
@@ -30,7 +30,7 @@
                     <option>CR</option>
                 </select>
             </div>
-            <div class="tooltip" data-tooltip="Host may use different charsets. Select right for automatice decode/encode">
+            <div class="tooltip" data-tooltip="Select host charset for correct data sending and visualising">
                 <select id="charsetSelect">
                     <option value="utf-8">UTF-8</option>
                     <option value="utf-16">UTF-16</option>
@@ -40,10 +40,10 @@
                     <option value="koi8-r">KOI8-R (UNIX)</option>
                 </select>
             </div>
-            <div class="tooltip" data-tooltip='Which ESC is enable, you can use escape sequences, such as \&#39;, \", \\, \n, \r, \t, \b, \f, \e'>
+            <div class="tooltip" data-tooltip='When ESC is enable, you can use escape sequences, such as \&#39;, \", \\, \n, \r, \t, \b, \f, \e'>
                 <select id="escSelect">
-                    <option>No ESC</option>
-                    <option>Enable ESC</option>
+                    <option value="escDisable">No ESC</option>
+                    <option value="escEnable">Enable ESC</option>
                 </select>
             </div>
             <span>&copy; Roman Sorokin, 2016</span>

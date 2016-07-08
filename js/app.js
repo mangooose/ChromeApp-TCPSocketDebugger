@@ -9,6 +9,36 @@ var dataAdd = function(data, type) {
     dataDiv.scrollTop = dataDiv.scrollHeight;
 };
 
+var addEOL = function(text, eol) {
+    switch (eol) {
+        case 'LF':
+            text += '\n';
+            break;
+        case 'CR+LF':
+            text += '\r\n';
+            break;
+        case 'CR':
+            text += '\r';
+            break;
+    }
+    return text
+};
+
+var addESC = function(text) {
+    text = text.replace(/\\"/g, '"');
+    text = text.replace(/\\'/g, '\'');
+    text = text.replace(/\\\\/g, '\\');
+    text = text.replace(/\\n/g, '\n');
+    text = text.replace(/\\r/g, '\r');
+    text = text.replace(/\\t/g, '\t');
+    text = text.replace(/\\b/g, '\b');
+    text = text.replace(/\\f/g, '\f');
+    text = text.replace(/\\e/g, String.fromCharCode(27));
+    
+    console.log(text);
+    return text;
+};
+
 var init = function() {
     var hostSubmit = document.getElementById('hostSubmit');
     var hostInput = document.getElementById('hostInput');
@@ -19,7 +49,7 @@ var init = function() {
 
     var eolSelect = document.getElementById('eolSelect');
     var charsetSelect = document.getElementById('charsetSelect');
-    //var escCheckbox = document.getElementById('escCheckbox');
+    var escSelect = document.getElementById('escSelect');
 
     var socketId;
     var converter = new TextConverter('utf-8');
@@ -71,17 +101,16 @@ var init = function() {
     }
 
     // Restore and save ESC
-    /*
     chrome.storage.local.get('esc', function(res){
         if(res.esc !== undefined) {
-            escCheckbox.checked = res.esc;
+            escSelect.value = res.esc;
         }
     });
 
-    escCheckbox.onchange = function() {
-        chrome.storage.local.set({esc: escCheckbox.checked});
+    escSelect.onchange = function() {
+        chrome.storage.local.set({esc: escSelect.value});
     }
-    */
+
 
     // On connect to host submit
     hostForm.onsubmit = function(){
@@ -135,22 +164,15 @@ var init = function() {
                 return;
             }
 
-            var data = sendInput.value;
-            switch (eolSelect.value) {
-                case 'LF':
-                    data += '\n';
-                    break;
-                case 'CR+LF':
-                    data += '\r\n';
-                    break;
-                case 'CR':
-                    data += '\r';
-                    break;
+            var text = sendInput.value;
+            if (escSelect.value === 'escEnable') {
+                text = addESC(text);
             }
-            var buffer = converter.encode(data);
+            text = addEOL(text, eolSelect.value);
+            var buffer = converter.encode(text);
 
             chrome.sockets.tcp.send(socketId, buffer, function(res){
-                dataAdd(data, 'outcoming');
+                dataAdd(text, 'outcoming');
                 if (sendInput.value !== '') {
                     history.push(sendInput.value);
                     historyPosition = history.length;
